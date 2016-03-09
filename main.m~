@@ -1,0 +1,70 @@
+oriImg =rgb2gray(imread('loli.jpg'));
+%% cal the modified img
+width = size(oriImg, 2);
+height = size(oriImg, 1);
+theta=15/360*2*3.1415;
+newImg= ones(height, width)*255;
+for i=1:width
+    for j=1:height
+        xx= i*cos(theta) -j*sin(theta)+(rand -0.5)*2;
+        yy= i*sin(theta) +j*cos(theta)+(rand -0.5)*2;
+        %xx=i+10;
+        %yy=j+5;
+        if(xx>0.5 && xx<width)
+            if(yy>0.5 && yy<height)
+                newImg(j,i) = oriImg(round(yy), round(xx));
+            end
+        end
+    end
+end
+newImg= uint8(newImg);
+%imshow(uint8(newImg));
+%% cal the motion
+points1 = detectSURFFeatures(newImg,'MetricThreshold',5000);
+%imshow(uint8(newImg)); hold on;
+%plot(points1.selectStrongest(10));
+[features1,validPoints1] = extractFeatures(newImg,points1);
+
+points2 = detectSURFFeatures(oriImg,'MetricThreshold',5000);
+[features2,validPoints2] = extractFeatures(oriImg,points2);
+
+index_pairs = matchFeatures(features1,features2);
+
+matched_pts1 = validPoints1(index_pairs(:, 1));
+matched_pts2 = validPoints2(index_pairs(:, 2));
+
+%showMatchedFeatures(newImg,oriImg,matched_pts1,matched_pts2,'montage');
+
+%% cal A and b
+matchPtNum=size(index_pairs,1);
+A=zeros(matchPtNum*2, 2);
+b=zeros(matchPtNum*2, 1);
+step=0.1;
+for i=1:matchPtNum
+    x=matched_pts1(i).Location(1);
+    x_prime=matched_pts1(i).Location(1);
+    A(i*2-1,:)=[matched_pts1(i).Location(1), -matched_pts1(i).Location(2)];
+    A(i*2,:)=[matched_pts1(i).Location(2), matched_pts1(i).Location(1)];
+    b(i*2-1,:) = matched_pts2(i).Location(1);
+    b(i*2,:) = matched_pts2(i).Location(2);
+end
+
+%%start ieration
+x=[1 0]';
+bStop=false;
+record=x;
+iterCount=0;
+while bStop
+    iterCount=iterCount+1;
+    deri = A'*A*x-A'*b;
+    x=x+deri*step;
+    record(iterCount)=x;
+    if(norm(deri)<0.01)
+        bStop=true;
+    end
+end
+for i=1:size(record,1)
+    plot(record(i,1),record(i,2));
+    hold on;
+end
+
