@@ -1,3 +1,4 @@
+clear all;
 oriImg =rgb2gray(imread('loli.jpg'));
 %% cal the modified img
 width = size(oriImg, 2);
@@ -33,38 +34,7 @@ index_pairs = matchFeatures(features1,features2);
 matched_pts1 = validPoints1(index_pairs(:, 1));
 matched_pts2 = validPoints2(index_pairs(:, 2));
 
-%showMatchedFeatures(newImg,oriImg,matched_pts1,matched_pts2,'montage');
+showMatchedFeatures(newImg,oriImg,matched_pts1,matched_pts2);
 
-%% cal A and b
-matchPtNum=size(index_pairs,1);
-A=zeros(matchPtNum*2, 2);
-b=zeros(matchPtNum*2, 1);
-step=0.1;
-for i=1:matchPtNum
-    x=matched_pts1(i).Location(1);
-    x_prime=matched_pts1(i).Location(1);
-    A(i*2-1,:)=[matched_pts1(i).Location(1), -matched_pts1(i).Location(2)];
-    A(i*2,:)=[matched_pts1(i).Location(2), matched_pts1(i).Location(1)];
-    b(i*2-1,:) = matched_pts2(i).Location(1);
-    b(i*2,:) = matched_pts2(i).Location(2);
-end
 
-%%start ieration
-x=[1 0]';
-bStop=false;
-record=x;
-iterCount=0;
-while bStop
-    iterCount=iterCount+1;
-    deri = A'*A*x-A'*b;
-    x=x+deri*step;
-    record(iterCount)=x;
-    if(norm(deri)<0.01)
-        bStop=true;
-    end
-end
-for i=1:size(record,1)
-    plot(record(i,1),record(i,2));
-    hold on;
-end
 
