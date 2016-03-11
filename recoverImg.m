@@ -1,9 +1,11 @@
 newImg= ones(height, width)*255;
-a=p(3);
-b=p(4);
+theta=p(3);
 tx=p(1);
 ty=p(2);
-TransMat=[1+a -b tx; b 1+a ty];
+%TransMat=[1+a -b tx; b 1+a ty];
+TransMat=[cos(theta) -sin(theta)  tx; sin(theta) cos(theta) ty];
+TransMat(3,:)=[0 0 1];
+TransMat= inv(TransMat);
 for i=1:width
     for j=1:height
         newP=  TransMat*[i j 1]';
