@@ -1,9 +1,11 @@
 newImg= ones(height, width)*255;
-theta=p(3);
-tx=p(1);
-ty=p(2);
-%TransMat=[1+a -b tx; b 1+a ty];
-TransMat=[cos(theta) -sin(theta)  tx; sin(theta) cos(theta) ty];
+a=curBestGauss(3);
+b=curBestGauss(4);
+theta=curBestGauss(3);
+tx=curBestGauss(1);
+ty=curBestGauss(2);
+TransMat=[1+a -b tx; b 1+a ty];
+%TransMat=[cos(theta) -sin(theta)  tx; sin(theta) cos(theta) ty];
 TransMat(3,:)=[0 0 1];
 TransMat= inv(TransMat);
 for i=1:width

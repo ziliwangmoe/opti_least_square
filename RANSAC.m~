@@ -1,0 +1,27 @@
+matchPtNumTotal=size(index_pairs,1);
+curMaxInliarCount =0;
+curBestGauss=0;
+outlai
+for j=1:1000
+    curPickedOutIndex = randi(matchPtNumTotal);
+    calCoefJaco;
+    a=p(3);
+    b=p(4);
+    tx=p(1);
+    ty=p(2);
+    TransMat=[1+a -b tx; b 1+a ty];
+    inliarCount =0;
+    for i=1:matchPtNumTotal
+        x=matched_pts2(i).Location;%original
+        x_prime=matched_pts1(i).Location;%modified
+        newP= TransMat*[x(1) x(2) 1]';
+        error = norm(newP -x_prime);
+        if (error < 1.0)
+            inliarCount=inliarCount+1;
+        end
+    end
+    if (curMaxInliarCount < inliarCount)
+        curMaxInliarCount = inliarCount
+        curBestGauss = p;
+    end
+end

@@ -1,6 +1,6 @@
 clear all;
 oriImg =rgb2gray(imread('loli.jpg'));
-modImg =rgb2gray(imread('loli_d.jpg'));
+modImg =rgb2gray(imread('loli_rt.jpg'));
 width = size(oriImg, 2);
 height = size(oriImg, 1);
 points1 = detectSURFFeatures(modImg,'MetricThreshold',10000);
@@ -15,4 +15,5 @@ matched_pts1 = validPoints1(index_pairs(:, 1));
 matched_pts2 = validPoints2(index_pairs(:, 2));
 
 showMatchedFeatures(modImg,oriImg,matched_pts1,matched_pts2,'montage');
+matchPtNumTotal=size(index_pairs,1);
 %showMatchedFeatures(modImg,oriImg,matched_pts1,matched_pts2);
